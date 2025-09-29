@@ -5,7 +5,6 @@ class RequestsController < ApplicationController
 
     @requests = current_organization
                 .ordered_requests
-                .undiscarded
                 .during(helpers.selected_range)
                 .class_filter(filter_params)
     @unfulfilled_requests_count = current_organization.requests.where(status: [:pending, :started]).count
@@ -20,6 +19,7 @@ class RequestsController < ApplicationController
     @selected_request_item = filter_params[:by_request_item_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_status]
+    # Add another variable
 
     respond_to do |format|
       format.html
@@ -87,9 +87,9 @@ class RequestsController < ApplicationController
   end
 
   helper_method \
-    def filter_params
+  def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_request_item_id, :by_partner, :by_status, :by_request_type)
+    params.require(:filters).permit(:by_request_item_id, :by_partner, :by_status, :by_request_type, :include_cancelled)
   end
 end
